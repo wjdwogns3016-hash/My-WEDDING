@@ -236,16 +236,33 @@ a {
 }
 
 .parents-info {
+    display: grid;
+    grid-template-columns: max-content 3.6em max-content;
+    justify-content: center;
+    align-items: baseline;
+    column-gap: 7px;
+    row-gap: 7px;
     margin: 15px 0;
     opacity: 0;
     animation: fadeInUp 0.8s ease-out 1s forwards;
 }
 
 .parent-line {
+    display: contents;
     font-size: 14px;
     color: #555;
-    margin: 5px 0;
     line-height: 1.6;
+}
+
+.parent-pair {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.family-relation {
+    text-align: center;
+    white-space: nowrap;
+    color: #555;
 }
 
 .parent-names {
@@ -1626,3 +1643,13 @@ a {
     }
 }
 
+@media (max-width: 380px) {
+    .parents-info {
+        grid-template-columns: max-content 3.4em max-content;
+        column-gap: 5px;
+    }
+
+    .parent-line {
+        font-size: 13px;
+    }
+}
