@@ -236,33 +236,48 @@ a {
 }
 
 .parents-info {
-    display: grid;
-    grid-template-columns: max-content 3.6em max-content;
-    justify-content: center;
-    align-items: baseline;
-    column-gap: 7px;
-    row-gap: 7px;
-    margin: 15px 0;
-    opacity: 0;
-    animation: fadeInUp 0.8s ease-out 1s forwards;
+    display: block;
+    width: 100%;
+    margin: 15px auto;
+    opacity: 1;
 }
 
 .parent-line {
-    display: contents;
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    width: 100%;
+    margin: 7px 0;
     font-size: 14px;
     color: #555;
     line-height: 1.6;
+    white-space: nowrap;
+}
+
+.parent-pair,
+.family-relation,
+.child-name {
+    display: block;
+    min-width: 0;
+    white-space: nowrap;
+    word-break: keep-all;
+    overflow-wrap: normal;
 }
 
 .parent-pair {
+    flex: 0 0 10.5em;
     text-align: right;
-    white-space: nowrap;
 }
 
 .family-relation {
+    flex: 0 0 4.1em;
     text-align: center;
-    white-space: nowrap;
     color: #555;
+}
+
+.child-name {
+    flex: 0 0 3.2em;
+    text-align: left;
 }
 
 .parent-names {
@@ -1644,12 +1659,19 @@ a {
 }
 
 @media (max-width: 380px) {
-    .parents-info {
-        grid-template-columns: max-content 3.4em max-content;
-        column-gap: 5px;
+    .parent-line {
+        font-size: 12.5px;
     }
 
-    .parent-line {
-        font-size: 13px;
+    .parent-pair {
+        flex-basis: 10.2em;
+    }
+
+    .family-relation {
+        flex-basis: 3.9em;
+    }
+
+    .child-name {
+        flex-basis: 3.2em;
     }
 }
