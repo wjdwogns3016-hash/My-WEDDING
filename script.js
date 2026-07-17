@@ -397,17 +397,32 @@
   let touchStartX = 0;
   let touchEndX = 0;
 
-  function openViewer(images, index) {
+  function openViewer(images, index, mode = 'gallery') {
     viewerImages = images;
     viewerIndex = index;
+
+    const viewer = $('#photoViewer');
+    const isSingleImage = images.length <= 1;
+
+    viewer.classList.toggle('map-viewer-mode', mode === 'map');
+    $('#viewerPrev').style.display = isSingleImage ? 'none' : '';
+    $('#viewerNext').style.display = isSingleImage ? 'none' : '';
+    $('.viewer-counter').style.display = isSingleImage ? 'none' : '';
+
     showViewerImage();
-    $('#photoViewer').classList.add('active');
+    viewer.classList.add('active');
     document.body.classList.add('no-scroll');
   }
 
   function closeViewer() {
-    $('#photoViewer').classList.remove('active');
+    const viewer = $('#photoViewer');
+    viewer.classList.remove('active', 'map-viewer-mode');
     document.body.classList.remove('no-scroll');
+
+    $('#viewerPrev').style.display = '';
+    $('#viewerNext').style.display = '';
+    $('.viewer-counter').style.display = '';
+
     const img = $('#viewerImage');
     if (img) img.style.transform = '';
   }
@@ -502,9 +517,162 @@
     const w = CONFIG.wedding;
     $('#locationVenue').textContent = w.venue;
     $('#locationAddress').textContent = w.address;
-    $('#locationMapImg').src = 'images/location/1.jpg?v=20260717-map2';
+
+    const locationMapImg = $('#locationMapImg');
+    const locationMapContainer = $('.location-map-container');
+    locationMapImg.src = 'images/location/1.jpg?v=20260717-map-zoom';
+
+    // 약도를 갤러리 뷰어처럼 크게 열기
+    const openLocationMap = () => {
+      openViewer([locationMapImg.currentSrc || locationMapImg.src], 0, 'map');
+    };
+
+    locationMapImg.setAttribute('role', 'button');
+    locationMapImg.setAttribute('tabindex', '0');
+    locationMapImg.setAttribute('aria-label', '약도 크게 보기');
+    locationMapImg.addEventListener('click', openLocationMap);
+    locationMapImg.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        openLocationMap();
+      }
+    });
+
+    if (locationMapContainer) {
+      locationMapContainer.classList.add('is-clickable');
+
+      if (!locationMapContainer.querySelector('.map-zoom-hint')) {
+        const zoomHint = document.createElement('div');
+        zoomHint.className = 'map-zoom-hint';
+        zoomHint.innerHTML = '<span aria-hidden="true">⌕</span> 사진을 눌러 크게 보기';
+        locationMapContainer.appendChild(zoomHint);
+      }
+    }
+
     $('#kakaoMapBtn').href = w.mapLinks.kakao || '#';
     $('#naverMapBtn').href = w.mapLinks.naver || '#';
+
+    // 약도에 포함된 교통 설명을 모바일에서 읽기 쉬운 텍스트 카드로 표시
+    const transportGuide = $('#transportGuide');
+    if (transportGuide && w.transportation) {
+      $('#transportTitle').textContent = w.transportation.title || '교통 안내';
+
+      const sectionsContainer = $('#transportSections');
+      sectionsContainer.innerHTML = '';
+
+      const transportSections = w.transportation.sections || [];
+
+      if (transportSections.length > 0) {
+        const tabGrid = document.createElement('div');
+        tabGrid.className = 'transport-tab-grid';
+
+        const detailPanel = document.createElement('div');
+        detailPanel.className = 'transport-detail-panel';
+        detailPanel.hidden = true;
+
+        const detailHeader = document.createElement('div');
+        detailHeader.className = 'transport-detail-header';
+
+        const detailIcon = document.createElement('span');
+        detailIcon.className = 'transport-detail-icon';
+        detailIcon.setAttribute('aria-hidden', 'true');
+
+        const detailTitle = document.createElement('h4');
+        detailTitle.className = 'transport-detail-title';
+
+        const detailClose = document.createElement('button');
+        detailClose.type = 'button';
+        detailClose.className = 'transport-detail-close';
+        detailClose.setAttribute('aria-label', '교통 안내 닫기');
+        detailClose.textContent = '×';
+
+        const detailList = document.createElement('ul');
+        detailList.className = 'transport-section-list transport-detail-list';
+
+        detailHeader.appendChild(detailIcon);
+        detailHeader.appendChild(detailTitle);
+        detailHeader.appendChild(detailClose);
+        detailPanel.appendChild(detailHeader);
+        detailPanel.appendChild(detailList);
+
+        let activeButton = null;
+
+        const closeDetail = () => {
+          detailPanel.hidden = true;
+          detailList.innerHTML = '';
+          if (activeButton) {
+            activeButton.classList.remove('active');
+            activeButton.setAttribute('aria-expanded', 'false');
+            activeButton = null;
+          }
+        };
+
+        detailClose.addEventListener('click', closeDetail);
+
+        transportSections.forEach((section) => {
+          const button = document.createElement('button');
+          button.type = 'button';
+          button.className = 'transport-tab';
+          button.setAttribute('aria-expanded', 'false');
+
+          const icon = document.createElement('span');
+          icon.className = 'transport-tab-icon';
+          icon.setAttribute('aria-hidden', 'true');
+          icon.textContent = section.icon || '•';
+
+          const title = document.createElement('span');
+          title.className = 'transport-tab-title';
+          title.textContent = section.title || '';
+
+          const arrow = document.createElement('span');
+          arrow.className = 'transport-tab-arrow';
+          arrow.setAttribute('aria-hidden', 'true');
+          arrow.textContent = '›';
+
+          button.appendChild(icon);
+          button.appendChild(title);
+          button.appendChild(arrow);
+
+          button.addEventListener('click', () => {
+            if (activeButton === button && !detailPanel.hidden) {
+              closeDetail();
+              return;
+            }
+
+            if (activeButton) {
+              activeButton.classList.remove('active');
+              activeButton.setAttribute('aria-expanded', 'false');
+            }
+
+            activeButton = button;
+            button.classList.add('active');
+            button.setAttribute('aria-expanded', 'true');
+
+            detailIcon.textContent = section.icon || '•';
+            detailTitle.textContent = section.title || '';
+            detailList.innerHTML = '';
+
+            (section.items || []).forEach((text) => {
+              const item = document.createElement('li');
+              item.textContent = text;
+              detailList.appendChild(item);
+            });
+
+            detailPanel.hidden = false;
+            detailPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          });
+
+          tabGrid.appendChild(button);
+        });
+
+        sectionsContainer.appendChild(tabGrid);
+        sectionsContainer.appendChild(detailPanel);
+      } else {
+        transportGuide.style.display = 'none';
+      }
+    } else if (transportGuide) {
+      transportGuide.style.display = 'none';
+    }
 
     const parkingGuide = $('#parkingGuide');
     if (parkingGuide && w.parking) {
