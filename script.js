@@ -520,7 +520,7 @@
 
     const locationMapImg = $('#locationMapImg');
     const locationMapContainer = $('.location-map-container');
-    locationMapImg.src = 'images/location/1.jpg?v=20260717-map-zoom';
+    locationMapImg.src = 'images/location/1.jpg?v=left-map-only-20260717-v2';
 
     // 약도를 갤러리 뷰어처럼 크게 열기
     const openLocationMap = () => {
