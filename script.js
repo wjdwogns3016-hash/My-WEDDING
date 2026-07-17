@@ -502,7 +502,7 @@
     const w = CONFIG.wedding;
     $('#locationVenue').textContent = w.venue;
     $('#locationAddress').textContent = w.address;
-    $('#locationMapImg').src = 'images/location/1.jpg';
+    $('#locationMapImg').src = 'images/location/1.jpg?v=20260717-map2';
     $('#kakaoMapBtn').href = w.mapLinks.kakao || '#';
     $('#naverMapBtn').href = w.mapLinks.naver || '#';
 
