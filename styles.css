@@ -236,48 +236,33 @@ a {
 }
 
 .parents-info {
-    display: block;
     width: 100%;
-    margin: 15px auto;
+    margin: 18px auto 15px;
+    text-align: center;
     opacity: 1;
 }
 
 .parent-line {
-    display: flex;
-    align-items: baseline;
-    justify-content: center;
-    width: 100%;
-    margin: 7px 0;
-    font-size: 14px;
-    color: #555;
-    line-height: 1.6;
-    white-space: nowrap;
-}
-
-.parent-pair,
-.family-relation,
-.child-name {
     display: block;
-    min-width: 0;
+    width: 100%;
+    margin: 8px auto;
+    padding: 0 8px;
+    color: #555;
+    font-size: clamp(12.5px, 3.55vw, 14px);
+    line-height: 1.65;
+    letter-spacing: -0.025em;
+    text-align: center;
     white-space: nowrap;
     word-break: keep-all;
     overflow-wrap: normal;
 }
 
-.parent-pair {
-    flex: 0 0 10.5em;
-    text-align: right;
-}
-
-.family-relation {
-    flex: 0 0 4.1em;
-    text-align: center;
-    color: #555;
-}
-
 .child-name {
-    flex: 0 0 3.2em;
-    text-align: left;
+    display: inline;
+    margin-left: 0.25em;
+    white-space: nowrap;
+    font-weight: 500;
+    color: #2c2c2c;
 }
 
 .parent-names {
@@ -1658,20 +1643,3 @@ a {
     }
 }
 
-@media (max-width: 380px) {
-    .parent-line {
-        font-size: 12.5px;
-    }
-
-    .parent-pair {
-        flex-basis: 10.2em;
-    }
-
-    .family-relation {
-        flex-basis: 3.9em;
-    }
-
-    .child-name {
-        flex-basis: 3.2em;
-    }
-}
