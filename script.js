@@ -931,14 +931,23 @@
       toggle.setAttribute('aria-label', open ? '빠른 메뉴 닫기' : '빠른 메뉴 열기');
     };
 
-    // 데스크톱에서는 항상 펼친 상태, 모바일에서는 버튼으로 여닫기
+    // 데스크톱에서는 항상 펼친 상태.
+    // 모바일에서는 최초 접속 시 펼쳐진 상태로 시작하고,
+    // 이후에는 사용자가 메뉴 버튼으로 자유롭게 열고 닫습니다.
+    let quickNavInitialized = false;
+
     const syncMode = () => {
       if (isMobile()) {
-        setOpen(false);
+        if (!quickNavInitialized) {
+          setOpen(true);
+        }
       } else {
         nav.classList.add('is-open');
         toggle.setAttribute('aria-expanded', 'true');
+        toggle.setAttribute('aria-label', '빠른 메뉴');
       }
+
+      quickNavInitialized = true;
     };
 
     toggle.addEventListener('click', () => {
