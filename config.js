@@ -135,6 +135,23 @@ const CONFIG = {
     ]
   },
 
+  // ── 서울 전세버스 신청 ──
+  busReservation: {
+    enabled: true,
+    title: "서울 전세버스 안내",
+    description: "서울·수도권에서 오시는 하객분들의 편의를 위해 예식장까지 왕복 전세버스를 운행할 예정입니다.\n\n원활한 차량 준비와 탑승 인원 확인을 위해 전세버스를 이용하시는 분께서는 아래 신청서를 꼭 작성해 주시길 부탁드립니다.",
+
+    // 신청 버튼 아래에 표시되는 추가 안내 문구
+    notice: "신청해 주신 연락처를 통해 버스 출발 장소와 시간 등 자세한 일정을 추후 한 분 한 분 안내드리겠습니다.",
+
+    // 출발 장소/시간이 확정되면 적어주세요. 비워두면 화면에 표시되지 않습니다.
+    routeInfo: "",
+
+    // Google Apps Script를 웹 앱으로 배포한 뒤 생성되는 /exec 주소를 입력하세요.
+    // 예: https://script.google.com/macros/s/xxxxxxxxxxxxxxxx/exec
+    submitUrl: "https://script.google.com/macros/s/AKfycbxxsd6ZaFM_3H7oN8QQas-F6I8JQ8qbIjy0hOS7sUFFttTnpDf7Haz5wrE019dwznh9/exec"
+  },
+
   // ── 링크 공유 시 나타나는 문구 ──
   meta: {
     title: "정재훈 ♥ 박선영 결혼합니다",

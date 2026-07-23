@@ -26,8 +26,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@300;400;500&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="styles.css?v=16">
-  <script src="config.js?v=10"></script>
+  <link rel="stylesheet" href="styles.css?v=17">
+  <script src="config.js?v=11"></script>
 </head>
 <body>
 
@@ -39,6 +39,48 @@
 
   <!-- ═══ 토스트 알림 ═══ -->
   <div id="toast" class="toast" aria-live="polite"></div>
+
+  <!-- ═══ 따라다니는 빠른 메뉴 ═══ -->
+  <nav class="quick-nav" id="quickNav" aria-label="청첩장 빠른 메뉴">
+    <button
+      type="button"
+      class="quick-nav-toggle"
+      id="quickNavToggle"
+      aria-expanded="false"
+      aria-controls="quickNavList"
+      aria-label="빠른 메뉴 열기"
+    >
+      <span class="quick-nav-toggle-icon" aria-hidden="true">☰</span>
+      <span class="quick-nav-toggle-text">메뉴</span>
+    </button>
+
+    <div class="quick-nav-list" id="quickNavList">
+      <button type="button" class="quick-nav-item" data-target="heroSection">
+        <span class="quick-nav-dot" aria-hidden="true"></span>
+        <span>처음</span>
+      </button>
+      <button type="button" class="quick-nav-item" data-target="storySection">
+        <span class="quick-nav-dot" aria-hidden="true"></span>
+        <span>우리의 이야기</span>
+      </button>
+      <button type="button" class="quick-nav-item" data-target="gallerySection">
+        <span class="quick-nav-dot" aria-hidden="true"></span>
+        <span>갤러리</span>
+      </button>
+      <button type="button" class="quick-nav-item" data-target="locationSection">
+        <span class="quick-nav-dot" aria-hidden="true"></span>
+        <span>오시는 길</span>
+      </button>
+      <button type="button" class="quick-nav-item" data-target="accountSection">
+        <span class="quick-nav-dot" aria-hidden="true"></span>
+        <span>마음 전하실 곳</span>
+      </button>
+      <button type="button" class="quick-nav-item" data-target="busReservationSection">
+        <span class="quick-nav-dot" aria-hidden="true"></span>
+        <span>전세버스</span>
+      </button>
+    </div>
+  </nav>
 
   <!-- ═══ 사진 뷰어 모달 ═══ -->
   <div class="photo-viewer" id="photoViewer" role="dialog" aria-modal="true" aria-label="사진 보기">
@@ -54,11 +96,78 @@
     </div>
   </div>
 
+  <!-- ═══ 서울 전세버스 신청 모달 ═══ -->
+  <div class="bus-modal" id="busModal" role="dialog" aria-modal="true" aria-labelledby="busModalTitle" aria-hidden="true">
+    <div class="bus-modal-backdrop" id="busModalBackdrop"></div>
+    <div class="bus-modal-panel" role="document">
+      <button type="button" class="bus-modal-close" id="busModalClose" aria-label="전세버스 신청 닫기">&times;</button>
+
+      <div class="bus-modal-heading">
+        <span class="bus-modal-kicker">BUS RESERVATION</span>
+        <h2 id="busModalTitle">전세버스 탑승 신청</h2>
+        <p>정확한 탑승 인원 확인을 위해 아래 내용을 작성해 주세요.</p>
+      </div>
+
+      <form class="bus-form" id="busReservationForm" method="post" target="busSubmitFrame" novalidate>
+        <div class="bus-form-field">
+          <label for="busName">성함 <span class="required-mark">*</span></label>
+          <input type="text" id="busName" name="name" autocomplete="name" required placeholder="성함을 입력해 주세요">
+        </div>
+
+        <div class="bus-form-field">
+          <label for="busPhone">연락처 <span class="required-mark">*</span></label>
+          <input type="tel" id="busPhone" name="phone" inputmode="tel" autocomplete="tel" required placeholder="010-0000-0000">
+          <p class="bus-field-help">버스 관련 안내가 필요한 경우 연락드릴 수 있습니다.</p>
+        </div>
+
+        <div class="bus-form-field">
+          <label for="busPassengerCount">탑승 인원 <span class="required-mark">*</span></label>
+          <input type="number" id="busPassengerCount" name="passengerCount" min="1" max="20" step="1" value="1" required>
+          <p class="bus-field-help">본인을 포함한 총 탑승 인원을 입력해 주세요.</p>
+        </div>
+
+        <fieldset class="bus-form-field bus-trip-field">
+          <legend>이용 구간 <span class="required-mark">*</span></legend>
+          <div class="bus-trip-options">
+            <label class="bus-trip-option">
+              <input type="radio" name="tripType" value="왕복" required>
+              <span>왕복</span>
+            </label>
+            <label class="bus-trip-option">
+              <input type="radio" name="tripType" value="서울 → 부산">
+              <span>서울 → 부산</span>
+            </label>
+            <label class="bus-trip-option">
+              <input type="radio" name="tripType" value="부산 → 서울">
+              <span>부산 → 서울</span>
+            </label>
+          </div>
+        </fieldset>
+
+        <div class="bus-form-field">
+          <label for="busCompanions">동행인 성함 <span class="optional-mark">선택</span></label>
+          <input type="text" id="busCompanions" name="companions" placeholder="여러 명인 경우 함께 탑승하는 분의 성함">
+        </div>
+
+        <div class="bus-form-field">
+          <label for="busNote">전달사항 <span class="optional-mark">선택</span></label>
+          <textarea id="busNote" name="note" rows="3" placeholder="필요한 내용이 있다면 남겨 주세요"></textarea>
+        </div>
+
+        <input type="hidden" name="source" value="mobile-wedding-invitation">
+        <button type="submit" class="bus-submit-btn" id="busSubmitBtn">신청하기</button>
+        <p class="bus-form-status" id="busFormStatus" aria-live="polite"></p>
+      </form>
+
+      <iframe name="busSubmitFrame" id="busSubmitFrame" title="전세버스 신청 전송" hidden></iframe>
+    </div>
+  </div>
+
   <!-- ═══ 메인 콘텐츠 ═══ -->
   <main class="main-container">
 
     <!-- ─── 첫번째 섹션: 메인 웨딩 사진 ─── -->
-    <section class="section section-hero">
+    <section class="section section-hero" id="heroSection">
       <div class="hero-image-container">
         <img src="" alt="웨딩 메인 사진" class="hero-image" id="heroImage">
       </div>
@@ -118,7 +227,7 @@
     </section>
 
     <!-- ─── 네번째 섹션: 오시는 길 ─── -->
-    <section class="section section-location">
+    <section class="section section-location" id="locationSection">
       <h2 class="location-title">오시는 길</h2>
       <div class="location-info">
         <p class="location-name" id="locationVenue"></p>
@@ -152,7 +261,7 @@
     </section>
 
     <!-- ─── 다섯번째 섹션: 축의금 ─── -->
-    <section class="section section-account">
+    <section class="section section-account" id="accountSection">
       <h2 class="account-title">마음 전하실 곳</h2>
       <p class="account-subtitle">참석이 어려우신 분들을 위해 비대면으로나마<br>마음을 전하실 수 있도록 안내드립니다.<br>보내주신 정성 소중히 간직하겠습니다.</p>
 
@@ -174,6 +283,18 @@
       </div>
     </section>
 
+    <!-- ─── 여섯번째 섹션: 서울 전세버스 신청 ─── -->
+    <section class="section section-bus" id="busReservationSection">
+      <div class="bus-banner fade-in">
+        <span class="bus-banner-kicker">BUS</span>
+        <h2 class="bus-banner-title" id="busBannerTitle"></h2>
+        <p class="bus-banner-description" id="busBannerDescription"></p>
+        <p class="bus-banner-route" id="busBannerRoute" hidden></p>
+        <button type="button" class="bus-banner-button" id="busApplyBtn">전세버스 탑승 신청하기</button>
+        <p class="bus-banner-notice" id="busBannerNotice" hidden></p>
+      </div>
+    </section>
+
     <!-- ─── 푸터 ─── -->
     <footer class="footer">
       <p class="footer-text" id="footerText"></p>
@@ -181,6 +302,6 @@
 
   </main>
 
-  <script src="script.js?v=16"></script>
+  <script src="script.js?v=17"></script>
 </body>
 </html>

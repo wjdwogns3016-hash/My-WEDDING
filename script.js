@@ -738,6 +738,300 @@
     });
   }
 
+
+  /* ═══════════════════════════════════════════
+     Seoul Charter Bus Reservation
+     ═══════════════════════════════════════════ */
+
+  function initBusReservation() {
+    const section = $('#busReservationSection');
+    const modal = $('#busModal');
+    const form = $('#busReservationForm');
+    const frame = $('#busSubmitFrame');
+    const submitBtn = $('#busSubmitBtn');
+    const status = $('#busFormStatus');
+    const bus = CONFIG.busReservation;
+
+    if (!section || !modal || !form || !bus || bus.enabled === false) {
+      if (section) section.style.display = 'none';
+      return;
+    }
+
+    $('#busBannerTitle').textContent = bus.title || '서울 전세버스 안내';
+    $('#busBannerDescription').textContent = bus.description || '';
+
+    const routeEl = $('#busBannerRoute');
+    if (routeEl && bus.routeInfo && bus.routeInfo.trim()) {
+      routeEl.textContent = bus.routeInfo.trim();
+      routeEl.hidden = false;
+    }
+
+    const noticeEl = $('#busBannerNotice');
+    if (noticeEl && bus.notice && bus.notice.trim()) {
+      noticeEl.textContent = bus.notice.trim();
+      noticeEl.hidden = false;
+    }
+
+    const openModal = () => {
+      modal.classList.add('active');
+      modal.setAttribute('aria-hidden', 'false');
+      document.body.classList.add('no-scroll');
+      setTimeout(() => $('#busName')?.focus(), 120);
+    };
+
+    const closeModal = () => {
+      if (submitBtn?.disabled) return;
+      modal.classList.remove('active');
+      modal.setAttribute('aria-hidden', 'true');
+      document.body.classList.remove('no-scroll');
+      if (status) {
+        status.textContent = '';
+        status.className = 'bus-form-status';
+      }
+    };
+
+    $('#busApplyBtn')?.addEventListener('click', openModal);
+    $('#busModalClose')?.addEventListener('click', closeModal);
+    $('#busModalBackdrop')?.addEventListener('click', closeModal);
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && modal.classList.contains('active')) {
+        closeModal();
+      }
+    });
+
+    // 전화번호는 숫자를 입력할 때 한국 휴대전화 형태로 보기 좋게 정리합니다.
+    const phoneInput = $('#busPhone');
+    phoneInput?.addEventListener('input', () => {
+      const digits = phoneInput.value.replace(/\D/g, '').slice(0, 11);
+      if (digits.length <= 3) {
+        phoneInput.value = digits;
+      } else if (digits.length <= 7) {
+        phoneInput.value = `${digits.slice(0, 3)}-${digits.slice(3)}`;
+      } else {
+        phoneInput.value = `${digits.slice(0, 3)}-${digits.slice(3, 7)}-${digits.slice(7)}`;
+      }
+    });
+
+    let isSubmitting = false;
+    let submitTimeout = null;
+
+    const finishSubmit = () => {
+      if (!isSubmitting) return;
+      isSubmitting = false;
+      clearTimeout(submitTimeout);
+
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = '신청하기';
+      }
+
+      if (status) {
+        status.textContent = '신청이 접수되었습니다. 자세한 일정은 입력해 주신 연락처로 추후 안내드리겠습니다.';
+        status.className = 'bus-form-status success';
+      }
+
+      form.reset();
+      const countInput = $('#busPassengerCount');
+      if (countInput) countInput.value = '1';
+
+      showToast('전세버스 탑승 신청이 접수되었습니다');
+
+      setTimeout(() => {
+        modal.classList.remove('active');
+        modal.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('no-scroll');
+        if (status) {
+          status.textContent = '';
+          status.className = 'bus-form-status';
+        }
+      }, 1200);
+    };
+
+    // 숨겨진 iframe이 Google Apps Script 응답을 로드하면 접수 완료로 처리합니다.
+    frame?.addEventListener('load', finishSubmit);
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+
+      const submitUrl = (bus.submitUrl || '').trim();
+      if (!submitUrl || !/^https:\/\/script\.google\.com\/macros\/s\//.test(submitUrl)) {
+        if (status) {
+          status.textContent = '아직 신청 저장 주소가 연결되지 않았습니다.';
+          status.className = 'bus-form-status error';
+        }
+        showToast('Google Sheets 저장 주소를 먼저 연결해 주세요');
+        return;
+      }
+
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
+      const tripType = form.querySelector('input[name="tripType"]:checked');
+      if (!tripType) {
+        showToast('이용 구간을 선택해 주세요');
+        return;
+      }
+
+      const passengerCount = Number($('#busPassengerCount')?.value || 0);
+      if (!Number.isInteger(passengerCount) || passengerCount < 1 || passengerCount > 20) {
+        showToast('탑승 인원을 확인해 주세요');
+        return;
+      }
+
+      form.action = submitUrl;
+      isSubmitting = true;
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = '신청 중...';
+      }
+      if (status) {
+        status.textContent = '신청 내용을 전송하고 있습니다.';
+        status.className = 'bus-form-status pending';
+      }
+
+      // target=hidden iframe 방식이라 GitHub Pages에서도 CORS 문제 없이 전송됩니다.
+      form.submit();
+
+      // 네트워크가 너무 오래 걸릴 때 버튼을 다시 사용할 수 있게 합니다.
+      submitTimeout = setTimeout(() => {
+        if (!isSubmitting) return;
+        isSubmitting = false;
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = '신청하기';
+        }
+        if (status) {
+          status.textContent = '전송이 지연되고 있습니다. 잠시 후 다시 시도해 주세요.';
+          status.className = 'bus-form-status error';
+        }
+      }, 12000);
+    });
+  }
+
+  /* ═══════════════════════════════════════════
+     Floating Quick Navigation
+     ═══════════════════════════════════════════ */
+
+  function initQuickNav() {
+    const nav = $('#quickNav');
+    const toggle = $('#quickNavToggle');
+    const list = $('#quickNavList');
+    if (!nav || !toggle || !list) return;
+
+    const items = $$('.quick-nav-item', nav);
+    const isMobile = () => window.matchMedia('(max-width: 767px)').matches;
+
+    const setOpen = (open) => {
+      nav.classList.toggle('is-open', open);
+      toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+      toggle.setAttribute('aria-label', open ? '빠른 메뉴 닫기' : '빠른 메뉴 열기');
+    };
+
+    // 데스크톱에서는 항상 펼친 상태, 모바일에서는 버튼으로 여닫기
+    const syncMode = () => {
+      if (isMobile()) {
+        setOpen(false);
+      } else {
+        nav.classList.add('is-open');
+        toggle.setAttribute('aria-expanded', 'true');
+      }
+    };
+
+    toggle.addEventListener('click', () => {
+      if (!isMobile()) return;
+      setOpen(!nav.classList.contains('is-open'));
+    });
+
+    items.forEach((item) => {
+      item.addEventListener('click', () => {
+        const targetId = item.dataset.target;
+        const target = document.getElementById(targetId);
+        if (!target || target.offsetParent === null) return;
+
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        if (isMobile()) {
+          setOpen(false);
+        }
+      });
+    });
+
+    // 전세버스 기능을 끈 경우 메뉴에서도 숨김
+    const busItem = nav.querySelector('[data-target="busReservationSection"]');
+    if (busItem && (!CONFIG.busReservation || CONFIG.busReservation.enabled === false)) {
+      busItem.hidden = true;
+    }
+
+    // 현재 보고 있는 섹션을 메뉴에 표시
+    const visibleTargets = items
+      .map((item) => {
+        const target = document.getElementById(item.dataset.target);
+        return { item, target };
+      })
+      .filter(({ item, target }) => target && !item.hidden);
+
+    const setActive = (activeItem) => {
+      visibleTargets.forEach(({ item }) => {
+        const active = item === activeItem;
+        item.classList.toggle('active', active);
+        if (active) {
+          item.setAttribute('aria-current', 'true');
+        } else {
+          item.removeAttribute('aria-current');
+        }
+      });
+    };
+
+    if ('IntersectionObserver' in window) {
+      const ratios = new Map();
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          ratios.set(entry.target.id, entry.isIntersecting ? entry.intersectionRatio : 0);
+        });
+
+        let best = null;
+        let bestRatio = 0;
+
+        visibleTargets.forEach(({ item, target }) => {
+          const ratio = ratios.get(target.id) || 0;
+          if (ratio > bestRatio) {
+            bestRatio = ratio;
+            best = item;
+          }
+        });
+
+        if (best) setActive(best);
+      }, {
+        rootMargin: '-18% 0px -58% 0px',
+        threshold: [0, 0.05, 0.15, 0.3, 0.5, 0.75]
+      });
+
+      visibleTargets.forEach(({ target }) => observer.observe(target));
+    } else if (visibleTargets.length) {
+      setActive(visibleTargets[0].item);
+    }
+
+    // 메뉴 바깥을 누르면 모바일 메뉴 닫기
+    document.addEventListener('click', (event) => {
+      if (!isMobile() || !nav.classList.contains('is-open')) return;
+      if (!nav.contains(event.target)) setOpen(false);
+    });
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && isMobile()) {
+        setOpen(false);
+      }
+    });
+
+    window.addEventListener('resize', syncMode);
+    syncMode();
+  }
+
   /* ═══════════════════════════════════════════
      Footer
      ═══════════════════════════════════════════ */
@@ -796,6 +1090,7 @@
     const parkingGuide = $('.parking-guide');
     const accountTitle = $('.account-title');
     const accountSubtitle = $('.account-subtitle');
+    const busBanner = $('.bus-banner');
 
     if (storyText) storyText.classList.add('fade-in-right');
     if (galleryTitle) galleryTitle.classList.add('fade-in');
@@ -806,6 +1101,7 @@
     if (parkingGuide) parkingGuide.classList.add('fade-in');
     if (accountTitle) accountTitle.classList.add('fade-in');
     if (accountSubtitle) accountSubtitle.classList.add('fade-in');
+    if (busBanner) busBanner.classList.add('fade-in');
 
     // Observe all animated elements
     $$('.fade-in, .fade-in-left, .fade-in-right, .scale-in').forEach(el => {
@@ -840,6 +1136,8 @@
     initPhotoViewer();
     initLocation();
     initAccounts();
+    initBusReservation();
+    initQuickNav();
     initFooter();
     initScrollAnimations();
 

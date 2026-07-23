@@ -1249,6 +1249,398 @@ a {
     }
 }
 
+
+
+/* ═══════════════════════════════════════════
+   Seoul Charter Bus Reservation
+   ═══════════════════════════════════════════ */
+.section-bus {
+    min-height: auto !important;
+    padding: 42px 20px 52px;
+    background: #fff;
+}
+
+.bus-banner {
+    position: relative;
+    width: 100%;
+    max-width: 400px;
+    padding: 34px 26px 30px;
+    border: 1px solid #e4d9cf;
+    border-radius: 18px;
+    background: linear-gradient(180deg, #fcfaf7 0%, #f7f1eb 100%);
+    box-shadow: 0 10px 30px rgba(85, 66, 50, 0.07);
+    text-align: center;
+    overflow: hidden;
+}
+
+.bus-banner::before,
+.bus-banner::after {
+    content: '';
+    position: absolute;
+    width: 90px;
+    height: 90px;
+    border: 1px solid rgba(166, 137, 111, 0.14);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.bus-banner::before {
+    top: -48px;
+    left: -42px;
+}
+
+.bus-banner::after {
+    right: -46px;
+    bottom: -50px;
+}
+
+.bus-banner-kicker {
+    display: inline-block;
+    margin-bottom: 10px;
+    color: #9a806b;
+    font-family: Arial, sans-serif;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.28em;
+}
+
+.bus-banner-title {
+    margin-bottom: 18px;
+    color: #332d28;
+    font-size: 21px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+}
+
+.bus-banner-description {
+    color: #655d56;
+    font-size: 13px;
+    line-height: 2;
+    white-space: pre-line;
+    word-break: keep-all;
+}
+
+.bus-banner-route {
+    margin: 18px auto 0;
+    padding: 11px 14px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.7);
+    color: #665344;
+    font-size: 12.5px;
+    line-height: 1.7;
+    white-space: pre-line;
+    word-break: keep-all;
+}
+
+.bus-banner-button {
+    width: 100%;
+    margin-top: 24px;
+    padding: 14px 18px;
+    border: 1px solid #8f725d;
+    border-radius: 999px;
+    background: #8f725d;
+    color: #fff;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: -0.01em;
+    cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bus-banner-button:hover,
+.bus-banner-button:focus-visible {
+    background: #7f634f;
+    box-shadow: 0 8px 20px rgba(94, 70, 51, 0.16);
+    outline: none;
+}
+
+.bus-banner-button:active {
+    transform: scale(0.985);
+}
+
+.bus-banner-notice {
+    margin: 16px 4px 0;
+    color: #80756c;
+    font-size: 11.5px;
+    line-height: 1.8;
+    word-break: keep-all;
+}
+
+/* 신청 모달 */
+.bus-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9500;
+    display: none;
+    align-items: flex-end;
+    justify-content: center;
+}
+
+.bus-modal.active {
+    display: flex;
+}
+
+.bus-modal-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(30, 25, 22, 0.58);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    animation: busBackdropIn 0.22s ease both;
+}
+
+.bus-modal-panel {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 520px;
+    max-height: min(90dvh, 760px);
+    padding: 30px 22px max(28px, env(safe-area-inset-bottom));
+    border-radius: 24px 24px 0 0;
+    background: #fffdfa;
+    box-shadow: 0 -20px 50px rgba(0, 0, 0, 0.16);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    animation: busPanelUp 0.28s ease both;
+}
+
+@keyframes busBackdropIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes busPanelUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.bus-modal-close {
+    position: absolute;
+    top: 12px;
+    right: 14px;
+    width: 38px;
+    height: 38px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: #968b82;
+    font-family: Arial, sans-serif;
+    font-size: 32px;
+    font-weight: 300;
+    line-height: 1;
+}
+
+.bus-modal-heading {
+    padding: 0 20px;
+    text-align: center;
+}
+
+.bus-modal-kicker {
+    display: block;
+    margin-bottom: 8px;
+    color: #9a806b;
+    font-family: Arial, sans-serif;
+    font-size: 9px;
+    font-weight: 600;
+    letter-spacing: 0.24em;
+}
+
+.bus-modal-heading h2 {
+    color: #302a26;
+    font-size: 21px;
+    font-weight: 500;
+}
+
+.bus-modal-heading p {
+    margin-top: 8px;
+    color: #8a817a;
+    font-size: 12.5px;
+    line-height: 1.7;
+    word-break: keep-all;
+}
+
+.bus-form {
+    margin-top: 26px;
+}
+
+.bus-form-field {
+    margin: 0 0 20px;
+    padding: 0;
+    border: 0;
+}
+
+.bus-form-field label,
+.bus-form-field legend {
+    display: block;
+    margin-bottom: 8px;
+    color: #4a4039;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.required-mark {
+    color: #a4675c;
+}
+
+.optional-mark {
+    margin-left: 4px;
+    color: #aaa19a;
+    font-size: 10px;
+    font-weight: 400;
+}
+
+.bus-form input[type="text"],
+.bus-form input[type="tel"],
+.bus-form input[type="number"],
+.bus-form textarea {
+    width: 100%;
+    min-height: 48px;
+    padding: 12px 13px;
+    border: 1px solid #e1d9d2;
+    border-radius: 10px;
+    background: #fff;
+    color: #3e3935;
+    font-family: inherit;
+    font-size: 14px;
+    line-height: 1.5;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.bus-form textarea {
+    min-height: 82px;
+    resize: vertical;
+}
+
+.bus-form input:focus,
+.bus-form textarea:focus {
+    border-color: #aa8d76;
+    box-shadow: 0 0 0 3px rgba(170, 141, 118, 0.11);
+}
+
+.bus-form input::placeholder,
+.bus-form textarea::placeholder {
+    color: #bbb3ad;
+}
+
+.bus-field-help {
+    margin-top: 6px;
+    color: #a09790;
+    font-size: 10.5px;
+    line-height: 1.55;
+}
+
+.bus-trip-options {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+}
+
+.bus-trip-option {
+    margin: 0 !important;
+    cursor: pointer;
+}
+
+.bus-trip-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.bus-trip-option span {
+    display: flex;
+    min-height: 48px;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 7px;
+    border: 1px solid #e1d9d2;
+    border-radius: 10px;
+    background: #fff;
+    color: #716861;
+    font-size: 11px;
+    line-height: 1.35;
+    text-align: center;
+    transition: border-color 0.2s ease, background 0.2s ease, color 0.2s ease;
+}
+
+.bus-trip-option input:checked + span {
+    border-color: #9b7d66;
+    background: #f3ebe4;
+    color: #4d3f35;
+    font-weight: 500;
+}
+
+.bus-trip-option input:focus-visible + span {
+    outline: 2px solid #b69b7c;
+    outline-offset: 2px;
+}
+
+.bus-submit-btn {
+    width: 100%;
+    min-height: 50px;
+    margin-top: 4px;
+    border: 0;
+    border-radius: 999px;
+    background: #8f725d;
+    color: #fff;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.bus-submit-btn:hover,
+.bus-submit-btn:focus-visible {
+    background: #7d624f;
+    outline: none;
+}
+
+.bus-submit-btn:disabled {
+    opacity: 0.55;
+    cursor: wait;
+}
+
+.bus-form-status {
+    min-height: 22px;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.bus-form-status.pending {
+    color: #8c7867;
+}
+
+.bus-form-status.success {
+    color: #627b63;
+}
+
+.bus-form-status.error {
+    color: #a06058;
+}
+
+@media screen and (min-width: 600px) {
+    .bus-modal {
+        align-items: center;
+        padding: 20px;
+    }
+
+    .bus-modal-panel {
+        border-radius: 22px;
+        max-height: min(90vh, 760px);
+        padding: 34px 30px;
+    }
+}
+
+@media (max-width: 380px) {
+    .bus-trip-options {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* ─── Print ─── */
 @media print {
     .curtain-overlay,
@@ -1258,7 +1650,9 @@ a {
     .countdown-container,
     .calendar-buttons,
     .location-buttons,
-    .account-item .copy-btn {
+    .account-item .copy-btn,
+    .bus-modal,
+    .bus-banner-button {
         display: none !important;
     }
 
@@ -1643,3 +2037,191 @@ a {
     }
 }
 
+
+
+/* ═══════════════════════════════════════════
+   Floating Quick Navigation
+   ═══════════════════════════════════════════ */
+.quick-nav {
+    position: fixed;
+    top: 50%;
+    right: max(12px, env(safe-area-inset-right));
+    transform: translateY(-50%);
+    z-index: 8500;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    pointer-events: none;
+}
+
+.quick-nav-toggle,
+.quick-nav-list {
+    pointer-events: auto;
+}
+
+.quick-nav-toggle {
+    display: none;
+    min-width: 54px;
+    height: 42px;
+    padding: 0 12px;
+    border: 1px solid rgba(178, 157, 138, 0.35);
+    border-radius: 999px;
+    background: rgba(255, 253, 250, 0.94);
+    color: #65584f;
+    box-shadow: 0 7px 24px rgba(73, 58, 47, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-size: 11px;
+    font-weight: 500;
+    line-height: 1;
+}
+
+.quick-nav-toggle-icon {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.quick-nav-list {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    padding: 8px;
+    border: 1px solid rgba(178, 157, 138, 0.26);
+    border-radius: 14px;
+    background: rgba(255, 253, 250, 0.92);
+    box-shadow: 0 10px 32px rgba(73, 58, 47, 0.11);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.quick-nav-item {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    min-width: 124px;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: #8b8179;
+    font-family: 'Noto Serif KR', serif;
+    font-size: 11.5px;
+    line-height: 1.35;
+    text-align: left;
+    white-space: nowrap;
+    transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.quick-nav-item:hover {
+    background: #f5eee7;
+    color: #4d4139;
+}
+
+.quick-nav-item:active {
+    transform: scale(0.98);
+}
+
+.quick-nav-item.active {
+    background: #f1e6dc;
+    color: #51443b;
+    font-weight: 500;
+}
+
+.quick-nav-dot {
+    width: 5px;
+    height: 5px;
+    flex: 0 0 5px;
+    border-radius: 50%;
+    background: #c9b9aa;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.quick-nav-item.active .quick-nav-dot {
+    background: #866c58;
+    transform: scale(1.45);
+}
+
+.quick-nav-item[hidden] {
+    display: none;
+}
+
+/* 메뉴로 이동했을 때 제목이 화면 맨 위에 너무 붙지 않도록 */
+#heroSection,
+#storySection,
+#gallerySection,
+#locationSection,
+#accountSection,
+#busReservationSection {
+    scroll-margin-top: 16px;
+}
+
+@media (max-width: 767px) {
+    .quick-nav {
+        top: auto;
+        right: max(12px, env(safe-area-inset-right));
+        bottom: max(20px, calc(env(safe-area-inset-bottom) + 12px));
+        transform: none;
+    }
+
+    .quick-nav-toggle {
+        display: inline-flex;
+    }
+
+    .quick-nav-list {
+        position: absolute;
+        right: 0;
+        bottom: 50px;
+        min-width: 154px;
+        padding: 8px;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(8px) scale(0.98);
+        transform-origin: bottom right;
+        transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+    }
+
+    .quick-nav.is-open .quick-nav-list {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0) scale(1);
+    }
+
+    .quick-nav-item {
+        min-width: 138px;
+        min-height: 38px;
+        padding: 9px 10px;
+        font-size: 12px;
+    }
+}
+
+@media (min-width: 768px) {
+    .quick-nav {
+        right: max(18px, env(safe-area-inset-right));
+    }
+
+    .quick-nav-list {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+/* 사진 확대 모달이 열렸을 때 메뉴는 숨김 */
+body.no-scroll .quick-nav {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+/* 출력 시 빠른 메뉴 제외 */
+@media print {
+    .quick-nav {
+        display: none !important;
+    }
+}
