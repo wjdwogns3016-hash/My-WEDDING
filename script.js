@@ -118,10 +118,10 @@
     };
     setMeta('property', 'og:title', m.title);
     setMeta('property', 'og:description', m.description);
-    setMeta('property', 'og:image', 'images/og/1.jpg');
+    setMeta('property', 'og:image', 'https://wjdwogns3016-hash.github.io/My-WEDDING/images/og/1.jpg?v=20260724');
     setMeta('name', 'twitter:title', m.title);
     setMeta('name', 'twitter:description', m.description);
-    setMeta('name', 'twitter:image', 'images/og/1.jpg');
+    setMeta('name', 'twitter:image', 'https://wjdwogns3016-hash.github.io/My-WEDDING/images/og/1.jpg?v=20260724');
     setMeta('name', 'description', m.description);
   }
 
